@@ -1,0 +1,96 @@
+@startuml "Signing Hub Darryn POC"
+
+    Title "Signing Hub Darryn POC"
+
+    rectangle {
+
+        class PackageDocument {
+            document_id: number;
+            document_name: string;
+            document_type: string;
+            created_on: Date;
+            modified_on: Date;
+        }
+
+        class PackageIntegration {
+            package_id: number;
+            language: string;
+            user_email: string;
+            callback_url: string;
+            collapse_panels: boolean;
+        }
+
+        class PackageUser {
+            user_email: string;
+            user_name: string;
+            role: string;
+            email_notification: boolean;
+            signing_order: number;
+            process_status: string;
+            processed_on: Date;
+        }
+
+note top of PackageUser
+    config section
+end note
+
+        class PackageWorkflow {
+            package_id: number;
+            package_name: string;
+            package_status: string;
+            next_signer: string;
+            next_signer_email: string;
+            uploaded_on: Date;
+            modified_on: Date;
+            documents: PackageDocument[];
+            users: PackageUser[];
+        }
+
+        class Package {
+            package_id: number;
+            workflow_mode: string;
+            workflow_type: string;
+            completed: boolean;
+            successful: boolean;
+        }
+
+        class SigningHubAuthUserModel {
+            access_token: string;
+            token_type: string;
+            expires_in: number;
+            refresh_token: string;
+            expiry_date?: Date;
+        }
+
+        class DocumentSigningService {
+
+            CreatePackage(matter: string): Package
+            UploadDocumentToPackage(packageId: number, file: File): PackageDocument
+            IntializeIntegration(payload: PackageIntegration): string
+            GetPackageWorkflow(packageId: number): PackageWorkflow
+            GetCachedPackages(): Package[]
+            GetAllPackageWorkflows(): PackageWorkflow[]
+            DownloadDocumentAsFile(packageId: number, documentId: number, fileName: string): File
+            CompletePackageSigning(packageId: number, successful = true)
+        }
+
+        class SigningHubService {
+
+            CreatePackage(packageName: string): Package
+            UploadDocument(packageId: number, file: File): PackageDocument
+            AddUser(packageId: number, users: PackageUser[])
+            Integrate(integrationPayload: PackageIntegration): string
+            GetWorkflow(packageId: number): PackageWorkflow
+            DownloadDocument(packageId: number, documentId: number): Blob
+        }
+
+        DocumentSigningService o-- SigningHubService
+        PackageWorkflow o-- Package
+        Package -- PackageUser
+        Package -- PackageDocument
+        Package - PackageIntegration
+    }
+
+
+
+@enduml

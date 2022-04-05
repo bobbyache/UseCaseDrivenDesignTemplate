@@ -1,0 +1,31 @@
+
+@startuml
+
+scale 3/3
+
+
+actor "User" as user
+boundary "Email Client" as email
+boundary "SendGrid" as sendgrid
+boundary "Angular Webclient" as webclient
+boundary "XD Server API" as api
+boundary "Trusted Host Service" as host
+boundary "B2C" as b2c
+
+user -> email: 1. click to activate
+email -> sendgrid: 2. "GET https://sendgrid.net/..."
+sendgrid -> sendgrid: 3. Resolve API request URL
+sendgrid -> api: 4. GET https://domain/notifications/23
+api -> api: 5. Process notification
+api -> webclient: 6. Redirect (302) http://domain/notifications?policy=B2C_1A_SignIn&...
+
+alt logged in
+    webclient -> api: 7. Process parameters
+    api -> api: 8. Process and prepare targeted page url
+    api -> webclient: 9. Redirect (302) http://domain/matters?id=123&doc=123...
+    webclient -> webclient: 10. Navigate to page
+else
+    webclient -> b2c: 11. Authenticate
+end
+@enduml
+

@@ -1,0 +1,22 @@
+@startuml "Update Package Status"
+scale 2/3
+
+left to right direction
+
+actor "User" as user
+
+rectangle "SubSystem" {
+
+    package "Package" {
+        usecase "Use Case 1" as usecase_1
+        usecase "Use Case 2" as usecase_2
+    }
+}
+
+user -- usecase_1
+user .. usecase_2
+
+
+note right of usecase_1 : here is a comment
+
+@enduml

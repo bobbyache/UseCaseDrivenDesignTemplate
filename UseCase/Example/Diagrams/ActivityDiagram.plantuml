@@ -1,0 +1,29 @@
+@startuml "Flow 7: Workflow Completion Reports"
+
+!include https://uml-services.xchangedocs.co.za/themes/github.puml
+
+' scale 2/3
+
+|SigningHub|
+
+start
+:Signing package completed;
+
+-> Workflow Completion Report;
+
+|eSigning Web Service|
+
+:Lookup the package id;
+
+if (known package id) then (yes)
+    :Update the client context package to show pending uploads;
+else (Package created\nwithin SigningHub)
+    :Retrieve package details from SigningHub;
+    :Examine the first documents `x-source`;
+    :Create a client context package entry;
+    :Update orginal client context package to deleted;
+endif
+
+stop
+
+@enduml
